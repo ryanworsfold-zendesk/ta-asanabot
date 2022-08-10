@@ -45,6 +45,7 @@ exports.handler = async function (event, context) {
       for (let event of body.events) {
           console.log(JSON.stringify(event, null, 2))
           const taskQualified = doesTaskQualify(event.parent.gid)
+          console.log(`task qualified: ${taskQualified}`)
           let type = event.resource.resource_type;
           let subtype = event.resource.resource_subtype
           let updateId = event.resource.gid
@@ -70,7 +71,7 @@ exports.handler = async function (event, context) {
                       console.log(error)
                   })
               } else {
-                  console.log('task does not qualify')
+                  console.log('task does not meet requirements')
               }
           }
 
@@ -93,7 +94,7 @@ exports.handler = async function (event, context) {
                       console.log(error)
                   })
               } else {
-                  console.log('task does not qualify')
+                  console.log('task does not meet requirements')
               }
           }
       }
@@ -116,9 +117,9 @@ exports.handler = async function (event, context) {
 }
 
 function doesTaskQualify(gid) {
-    if (CARDS_TO_INCLUDE) {
+    if (CARDS_TO_INCLUDE && CARDS_TO_INCLUDE[0] !== '') {
         return CARDS_TO_INCLUDE.includes(gid)
-    } else if (CARDS_TO_EXCLUDE) {
+    } else if (CARDS_TO_EXCLUDE && CARDS_TO_EXCLUDE[0] !== '') {
         return !CARDS_TO_EXCLUDE.includes(gid)
     } else {
         return true
