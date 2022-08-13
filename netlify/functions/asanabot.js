@@ -51,6 +51,7 @@ exports.handler = async function (event, context) {
           let updateId = event.resource.gid
           let parent = event.parent
           let actor = event.user && event.user.resource_type === 'user' ? event.user.gid : 'non-user'
+        
 
           // first assignment
           if (type === 'story' && subtype === 'assigned') {
@@ -60,7 +61,9 @@ exports.handler = async function (event, context) {
                   console.log(error)
               })
 
-              if (task && task.data && !task.data.tags.includes('first_assignment') && taskQualified) {
+              let tagIds = task.data.tags.map(tagObj => tagObj.gid) || []
+
+              if (task && task.data && !tagIds.includes(TAG_ID_MAP['first_assignment']) && taskQualified) {
                   console.log('adding assignment tag')
                   addTag(parent.gid, 'first_assignment').catch(error => {
                       console.log('error adding tag')
@@ -83,7 +86,9 @@ exports.handler = async function (event, context) {
                   console.log(error)
               })
 
-              if (task && task.data && task.data.assignee !== null && task.data.assignee.gid === actor && !task.data.tags.includes('first_reply') && taskQualified) {
+              let tagIds = task.data.tags.map(tagObj => tagObj.gid) || []
+
+              if (task && task.data && task.data.assignee !== null && task.data.assignee.gid === actor && !tagIds.includes(TAG_ID_MAP['first_reply']) && taskQualified) {
                   console.log('adding first reply tag')
                   await addTag(parent.gid, 'first_reply').catch(error => {
                       console.log('error adding tag')
